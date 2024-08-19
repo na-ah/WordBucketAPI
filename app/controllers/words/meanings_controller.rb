@@ -26,10 +26,26 @@ class Words::MeaningsController < ApplicationController
 
   def create
     word = Word.find_by(id: params[:word_id])
-    meaning = word.meanings.build(meaning_params)
+    meaning = word.meanings.find_or_initialize_by(meaning_params)
 
     if meaning.save
-      render json: { message: 'meaning has successfully created' }, status: 200
+      render json: { message: 'Meaning has successfully created' }, status: 200
+    else
+      render json: { error: meaning.errors }, status: 400
+    end
+  end
+
+  def update
+    word = Word.find_by(id: params[:word_id])
+
+    unless word
+      render json: { error: 'Word not found' }, status: 404
+    end
+
+    meaning = word.meanings.find_by(id: params[:id] )
+
+    if meaning.update(meaning_params)
+      render json: { data: meaning }, status: 200
     else
       render json: { error: meaning.errors }, status: 400
     end
