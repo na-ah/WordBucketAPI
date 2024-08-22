@@ -1,4 +1,21 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# == Schema Information
+#
+# Table name: meanings
+#
+#  id         :bigint           not null, primary key
+#  meaning    :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  word_id    :bigint           not null
+#
+# Indexes
+#
+#  index_meanings_on_word_id  (word_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (word_id => words.id)
+#
 
 one:
   meaning: MyString

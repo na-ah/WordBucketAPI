@@ -1,6 +1,6 @@
 class WordsController < ApplicationController
   def index
-    words = Word.includes(:meanings, :examples).map do |word|
+    words = Word.includes(:meanings, :examples, :histories).map do |word|
       word.as_json.merge({
         meanings: word.meanings.as_json,
         examples: word.examples.as_json,
@@ -88,8 +88,63 @@ class WordsController < ApplicationController
     end
   end
 
+  def search
+    words = Word.includes(:meanings, :examples, :histories)
+    words = filter_words(words)
+
+    words_json = Words::WordsWithAssociationsQuery.call(words)
+
+    render json: {words: words_json }, status: 200
+  end
+
   private
 
+  def filter_words(words)
+    words = Words::FilterByCountQuery.call(
+      words,
+      search_learning_count_params
+    )
+    words = Words::FilterByDateQuery.call(
+      words,
+      search_date_params
+    )
+    words = Words::FilterByCorrectRateQuery.call(
+      words,
+      search_correct_rate_params
+    )
+    words = Words::FilterByAverageDurationQuery.call(
+      words,
+      search_average_duration_params
+    )
+    words = Words::FilterByStatusQuery.call(
+      words,
+      search_status_params
+    )
+    words
+  end
+
+  # クエリで使用するパラメータ
+  def search_learning_count_params
+    params.slice(:learning_count_min, :learning_count_max).permit(:learning_count_min, :learning_count_max)
+  end
+
+  def search_date_params
+    params.slice(:created_at_from, :created_at_to).permit(:created_at_from, :created_at_to)
+  end
+
+  def search_correct_rate_params
+    params.slice(:correct_rate_min, :correct_rate_max).permit(:correct_rate_min, :correct_rate_max)
+  end
+
+  def search_average_duration_params
+    params.slice(:average_duration_min, :average_duration_max).permit(:average_duration_min, :average_duration_max)
+  end
+
+  def search_status_params
+    params.slice(:status).permit(:status)
+  end
+
+  # クエリ以外で使用するパラメータ
   def word_params
     params.permit(:word)
   end
@@ -105,4 +160,9 @@ class WordsController < ApplicationController
   def history_params
     params.require(:history).permit(:duration, :result, :datetime)
   end
+
+  def status_params
+    params.permit(:status)
+  end
+
 end

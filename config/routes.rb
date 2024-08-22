@@ -13,9 +13,14 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   resources :words, only: [:index, :show, :create, :update, :destroy] do
+    collection do
+      get 'search'
+    end
+
     resources :meanings, only: [:index, :show, :create, :destroy, :update], module: 'words'
     resources :examples, only: [:index, :show, :create, :destroy, :update], module: 'words'
     resources :histories, only: [:index, :show, :create, :destroy, :update], module: 'words'
   end
+
   # resources :examples, only: [:index, :show, :create, :update, :destroy]
 end
