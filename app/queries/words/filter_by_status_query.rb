@@ -29,6 +29,7 @@ class Words::FilterByStatusQuery
       words = words.where(id: completed_word_ids)
     end
 
-    words
+    # words
+    words.count.size
   end
 end

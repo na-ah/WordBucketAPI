@@ -22,5 +22,7 @@ Rails.application.routes.draw do
     resources :histories, only: [:index, :show, :create, :destroy, :update], module: 'words'
   end
 
+  get '/dashboard', to: 'dashboard#index'
+
   # resources :examples, only: [:index, :show, :create, :update, :destroy]
 end
