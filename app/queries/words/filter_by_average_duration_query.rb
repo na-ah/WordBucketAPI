@@ -1,5 +1,5 @@
 class Words::FilterByAverageDurationQuery
-  def self.call(words, params)
+  def self.call(words, params, type: :relation)
     average_duration_min = params[:average_duration_min] || nil
     average_duration_max = params[:average_duration_max] || nil
 
@@ -7,8 +7,8 @@ class Words::FilterByAverageDurationQuery
 
     words = words.having('AVG(histories.duration) >= ?', average_duration_min) if average_duration_min
 
-    words = words.having('AVG(histories.duration) <= ?', average_duration_max) if average_duration_max
+    words = words.having('AVG(histories.duration) < ?', average_duration_max) if average_duration_max
 
-    words
+    type === :relation ? words : words.size.count
   end
 end
