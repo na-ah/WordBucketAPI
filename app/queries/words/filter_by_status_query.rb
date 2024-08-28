@@ -6,7 +6,7 @@ class Words::FilterByStatusQuery
 
     case status
     when :unlearned
-      words = words.having('COUNT(histories.id) = 0')
+      words = words.left_outer_joins(:histories).having('COUNT(histories.id) = 0')
     when :in_progress
       in_progress_word_ids =
         History

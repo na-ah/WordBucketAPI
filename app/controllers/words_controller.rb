@@ -90,6 +90,7 @@ class WordsController < ApplicationController
 
   def search
     words = Word.includes(:meanings, :examples, :histories)
+    # words = Word.all
     words = filter_words(words)
 
     words_json = Words::WordsWithAssociationsQuery.call(words)
@@ -104,21 +105,21 @@ class WordsController < ApplicationController
       words,
       search_learning_count_params
     )
-    words = Words::FilterByDateQuery.call(
+    words = Words::FilterByStatusQuery.call(
       words,
-      search_date_params
+      search_status_params
     )
     words = Words::FilterByCorrectRateQuery.call(
       words,
       search_correct_rate_params
     )
+    words = Words::FilterByDateQuery.call(
+      words,
+      search_date_params
+    )
     words = Words::FilterByAverageDurationQuery.call(
       words,
       search_average_duration_params
-    )
-    words = Words::FilterByStatusQuery.call(
-      words,
-      search_status_params
     )
     words
   end
