@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :words, only: [:index, :show, :create, :update, :destroy] do
     collection do
       get 'search'
+      get 'ids'
     end
 
     resources :meanings, only: [:index, :show, :create, :destroy, :update], module: 'words'

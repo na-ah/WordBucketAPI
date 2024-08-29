@@ -98,6 +98,12 @@ class WordsController < ApplicationController
     render json: {words: words_json }, status: 200
   end
 
+  def ids
+    ids = ids_params[:ids].split(',').map(&:to_i)
+    words = Words::WordsForIdsQuery.call(ids)
+    render json: {words: words}, status: 200
+  end
+
   private
 
   def filter_words(words)
@@ -143,6 +149,10 @@ class WordsController < ApplicationController
 
   def search_status_params
     params.slice(:status).permit(:status)
+  end
+
+  def ids_params
+    params.slice(:ids).permit(:ids)
   end
 
   # クエリ以外で使用するパラメータ
