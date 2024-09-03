@@ -4,13 +4,13 @@ class Words::FilterByAverageDurationQuery
     average_duration_max = params[:average_duration_max] || nil
 
     words = words
-              .select('words.id, words.word, ROUND(CAST(AVG(histories.duration) AS numeric), 2) as average_duration')
+              .select("words.id, words.word, ROUND(CAST(AVG(histories.duration) AS numeric), 2) as average_duration")
               .left_joins(:histories)
-              .group('words.id')
+              .group("words.id")
 
-    words = words.having('AVG(histories.duration) >= ?', average_duration_min) if average_duration_min
+    words = words.having("AVG(histories.duration) >= ?", average_duration_min) if average_duration_min
 
-    words = words.having('AVG(histories.duration) < ?', average_duration_max) if average_duration_max
+    words = words.having("AVG(histories.duration) < ?", average_duration_max) if average_duration_max
 
     type === :relation ? words : words.size.count
   end

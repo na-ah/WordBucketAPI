@@ -8,7 +8,7 @@ class WordsController < ApplicationController
       })
     end
 
-    render json: {words: words}, status: 200
+    render json: { words: words }, status: 200
   end
 
   def show
@@ -19,11 +19,10 @@ class WordsController < ApplicationController
       word_json[:meanings] = word.meanings.map(&:as_json)
       word_json[:examples] = word.examples.map(&:as_json)
       word_json[:histories] = word.histories.map(&:as_json)
-      render json: {word: word_json}, status: 200
+      render json: { word: word_json }, status: 200
     else
-      render json: { error: 'Word not found' }, status: 404
+      render json: { error: "Word not found" }, status: 404
     end
-
   end
 
   def create
@@ -42,7 +41,7 @@ class WordsController < ApplicationController
     end
 
     if word.save
-      render json: {data: word.as_json(include: [:meanings, :examples, :histories])}, status: 200
+      render json: { data: word.as_json(include: [ :meanings, :examples, :histories ]) }, status: 200
     else
       render json: { errors: word.errors }, status: 400
     end
@@ -52,7 +51,7 @@ class WordsController < ApplicationController
     word = Word.find_by(id: params[:id])
 
     unless word
-      render json: { message: 'Word not found' }, status: 404
+      render json: { message: "Word not found" }, status: 404
     end
 
     ActiveRecord::Base.transaction do
@@ -70,7 +69,7 @@ class WordsController < ApplicationController
             examples: word.examples.as_json,
             histories: word.histories.as_json
           })
-        render json: {word: word_json}, status: 200
+        render json: { word: word_json }, status: 200
       else
         render json: { errors: word.errors }, status: 400
       end
@@ -82,9 +81,9 @@ class WordsController < ApplicationController
 
     if word
       word.destroy
-      render json: { message: 'Word deleted successfully' }, status: 200
+      render json: { message: "Word deleted successfully" }, status: 200
     else
-      render json: { error: 'Word not found' }, status: 404
+      render json: { error: "Word not found" }, status: 404
     end
   end
 
@@ -95,13 +94,13 @@ class WordsController < ApplicationController
 
     words_json = Words::WordsWithAssociationsQuery.call(words)
 
-    render json: {words: words_json }, status: 200
+    render json: { words: words_json }, status: 200
   end
 
   def ids
-    ids = ids_params[:ids].split(',').map(&:to_i)
+    ids = ids_params[:ids].split(",").map(&:to_i)
     words = Words::WordsForIdsQuery.call(ids)
-    render json: {words: words}, status: 200
+    render json: { words: words }, status: 200
   end
 
   private
@@ -175,5 +174,4 @@ class WordsController < ApplicationController
   def status_params
     params.permit(:status)
   end
-
 end

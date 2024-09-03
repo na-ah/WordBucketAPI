@@ -2,11 +2,11 @@ class Words::FilterByStatusQuery
   def self.call(words, params, type: :relation)
     status = params[:status]&.to_sym || nil
 
-    words = words.group('words.id')
+    words = words.group("words.id")
 
     case status
     when :unlearned
-      words = words.left_outer_joins(:histories).having('COUNT(histories.id) = 0')
+      words = words.left_outer_joins(:histories).having("COUNT(histories.id) = 0")
     when :in_progress
       in_progress_word_ids =
         History
@@ -19,9 +19,9 @@ class Words::FilterByStatusQuery
                 PARTITION BY word_id
                 ORDER BY created_at DESC) AS row_num
             FROM histories)")
-          .where('row_num <= 3')
+          .where("row_num <= 3")
           .group(:word_id)
-          .having('SUM(CASE WHEN result = true THEN 1 ELSE 0 END) <> 3')
+          .having("SUM(CASE WHEN result = true THEN 1 ELSE 0 END) <> 3")
 
       words = words.where(id: in_progress_word_ids)
     when :completed
@@ -36,10 +36,10 @@ class Words::FilterByStatusQuery
                 PARTITION BY word_id
                 ORDER BY created_at DESC) AS row_num
             FROM histories)")
-          .where('row_num <= 3')
+          .where("row_num <= 3")
           .group(:word_id)
-          .having('COUNT(*) = 3')
-          .having('SUM(CASE WHEN result = true THEN 1 ELSE 0 END) = 3')
+          .having("COUNT(*) = 3")
+          .having("SUM(CASE WHEN result = true THEN 1 ELSE 0 END) = 3")
 
       words = words.where(id: completed_word_ids)
     end

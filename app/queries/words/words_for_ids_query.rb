@@ -10,7 +10,7 @@ class Words::WordsForIdsQuery
               ')
       .includes(:examples, :meanings, :histories)
       .where(id: ids)
-      .group('words.id')
+      .group("words.id")
       .left_joins(:histories)
     words = words.map do |word|
       word.as_json.merge({
@@ -21,5 +21,4 @@ class Words::WordsForIdsQuery
     end
     words
   end
-
 end
