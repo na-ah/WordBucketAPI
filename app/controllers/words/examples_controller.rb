@@ -29,7 +29,7 @@ class Words::ExamplesController < ApplicationController
     example = word.examples.find_or_initialize_by(example_params)
 
     if example.save
-      render json: { message: 'Example has successfully created' }, status: 200
+      render json: { word: word.as_json.merge(examples: word.examples.as_json) }, status: 200
     else
       render json: { error: example.errors }, status: 400
     end
@@ -39,13 +39,13 @@ class Words::ExamplesController < ApplicationController
     word = Word.find_by(id: params[:word_id])
 
     unless word
-      render json: { error: 'Word not found' }, status: 404
+      render json: { error: "Word not found" }, status: 404
     end
 
-    example = word.examples.find_by(id: params[:id] )
+    example = word.examples.find_by(id: params[:id])
 
     if example.update(example_params)
-      render json: { data: example }, status: 200
+      render json: { word: word.as_json.merge(examples: word.examples.as_json) }, status: 200
     else
       render json: { error: example.errors }, status: 400
     end
@@ -62,9 +62,9 @@ class Words::ExamplesController < ApplicationController
 
     if example
       example.destroy
-      render json: { message: 'Example deleted successfully' }, status: 200
+      render json: { message: "Example deleted successfully" }, status: 200
     else
-      render json: { error: 'Example not found'}, status: 404
+      render json: { error: "Example not found" }, status: 404
     end
   end
 

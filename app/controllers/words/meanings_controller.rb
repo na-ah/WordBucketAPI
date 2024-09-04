@@ -29,7 +29,7 @@ class Words::MeaningsController < ApplicationController
     meaning = word.meanings.find_or_initialize_by(meaning_params)
 
     if meaning.save
-      render json: { message: 'Meaning has successfully created' }, status: 200
+      render json: { word: word.as_json.merge(meanings: word.meanings.as_json) }, status: 200
     else
       render json: { error: meaning.errors }, status: 400
     end
@@ -39,13 +39,14 @@ class Words::MeaningsController < ApplicationController
     word = Word.find_by(id: params[:word_id])
 
     unless word
-      render json: { error: 'Word not found' }, status: 404
+      render json: { error: "Word not found" }, status: 404
     end
 
-    meaning = word.meanings.find_by(id: params[:id] )
+    meaning = word.meanings.find_by(id: params[:id])
 
     if meaning.update(meaning_params)
-      render json: { data: meaning }, status: 200
+      # render json: { data: meaning }, status: 200
+      render json: { word: word.as_json.merge(meanings: word.meanings.as_json) }, status: 200
     else
       render json: { error: meaning.errors }, status: 400
     end
@@ -62,9 +63,9 @@ class Words::MeaningsController < ApplicationController
 
     if meaning
       meaning.destroy
-      render json: { message: 'Meaning deleted successfully' }, status: 200
+      render json: { message: "Meaning deleted successfully" }, status: 200
     else
-      render json: { error: 'Meaning not found'}, status: 404
+      render json: { error: "Meaning not found" }, status: 404
     end
   end
 
