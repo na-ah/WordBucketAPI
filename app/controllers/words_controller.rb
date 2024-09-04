@@ -126,10 +126,27 @@ class WordsController < ApplicationController
       words,
       search_average_duration_params
     )
+    words = Words::FilterByMissingQuery.call(
+      words,
+      search_missing_params
+    )
+    words = Words::FilterByLimitQuery.call(
+      words,
+      search_limit_params
+    )
+
     words
   end
 
   # クエリで使用するパラメータ
+  def search_limit_params
+    params.slice(:limit).permit(:limit)
+  end
+
+  def search_missing_params
+    params.slice(:missing_examples, :missing_meanings).permit(:missing_examples, :missing_meanings)
+  end
+
   def search_learning_count_params
     params.slice(:learning_count_min, :learning_count_max).permit(:learning_count_min, :learning_count_max)
   end
