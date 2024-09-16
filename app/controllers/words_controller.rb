@@ -103,6 +103,12 @@ class WordsController < ApplicationController
     render json: { words: words }, status: 200
   end
 
+  def list
+    words = words_params[:words].split(",")
+    words = Words::WordsForListQuery.call(words)
+    render json: words.as_json, status: 200
+  end
+
   private
 
   def filter_words(words)
@@ -135,10 +141,18 @@ class WordsController < ApplicationController
       search_limit_params
     )
 
+    words = Words::FilterByHistoryDateQuery.call(
+      words,
+      search_history_date_params
+    )
     words
   end
 
   # クエリで使用するパラメータ
+  def search_history_date_params
+    params.slice(:sort_by_latest_history, :sort_by_oldest_history).permit(:sort_by_latest_history, :sort_by_oldest_history)
+  end
+
   def search_limit_params
     params.slice(:limit).permit(:limit)
   end
@@ -167,9 +181,6 @@ class WordsController < ApplicationController
     params.slice(:status).permit(:status)
   end
 
-  def ids_params
-    params.slice(:ids).permit(:ids)
-  end
 
   # クエリ以外で使用するパラメータ
   def word_params
@@ -190,5 +201,13 @@ class WordsController < ApplicationController
 
   def status_params
     params.permit(:status)
+  end
+
+  def ids_params
+    params.slice(:ids).permit(:ids)
+  end
+
+  def words_params
+    params.slice(:words).permit(:words)
   end
 end

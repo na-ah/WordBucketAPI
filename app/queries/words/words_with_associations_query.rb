@@ -3,7 +3,8 @@ class Words::WordsWithAssociationsQuery
     results = []
     words
     .includes(:meanings, :examples, :histories)
-    .find_each do |word|
+    .order("RANDOM()")
+    .each do |word|
       results << word.as_json.merge({
         meanings: word.meanings.as_json,
         examples: word.examples.as_json,

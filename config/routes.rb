@@ -12,18 +12,19 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  resources :words, only: [:index, :show, :create, :update, :destroy] do
+  resources :words, only: [ :index, :show, :create, :update, :destroy ] do
     collection do
-      get 'search'
-      get 'ids'
+      get "search"
+      get "ids"
+      get "list"
     end
 
-    resources :meanings, only: [:index, :show, :create, :destroy, :update], module: 'words'
-    resources :examples, only: [:index, :show, :create, :destroy, :update], module: 'words'
-    resources :histories, only: [:index, :show, :create, :destroy, :update], module: 'words'
+    resources :meanings, only: [ :index, :show, :create, :destroy, :update ], module: "words"
+    resources :examples, only: [ :index, :show, :create, :destroy, :update ], module: "words"
+    resources :histories, only: [ :index, :show, :create, :destroy, :update ], module: "words"
   end
 
-  get '/dashboard', to: 'dashboard#index'
+  get "/dashboard", to: "dashboard#index"
 
   # resources :examples, only: [:index, :show, :create, :update, :destroy]
 end
