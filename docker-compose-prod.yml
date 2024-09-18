@@ -3,8 +3,6 @@ services:
     image: postgres
     volumes:
       - postgres_volume:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=secret
   web:
     build:
       context: .

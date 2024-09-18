@@ -3,8 +3,6 @@ services:
     image: postgres
     volumes:
       - postgres_volume:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=secret
   web:
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3001 -b '0.0.0.0'"
