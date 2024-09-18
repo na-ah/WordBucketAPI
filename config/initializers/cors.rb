@@ -7,7 +7,7 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins ENV["FRONTEND_ORIGIN"], "http://192.168.10.106:3000", "https://word-bucket.narulab.xyz"
+    origins ENV["FRONTEND_ORIGIN"], "http://192.168.10.106:3000", "https://word-bucket.narulab.xyz", "https://word-bucket.vercel.app"
 
     resource "*",
       headers: :any,
