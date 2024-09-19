@@ -3,10 +3,6 @@ services:
     image: postgres
     env_file:
       - .env
-    environment:
-      DATABASE_USER: ${POSTGRES_USER}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
-      DATABASE_DB: ${POSTGRES_DB}
     volumes:
       - postgres_volume:/var/lib/postgresql/data
   web:
@@ -16,20 +12,8 @@ services:
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3001 -b '0.0.0.0'"
     env_file:
       - .env
-    environment:
-      FRONTEND_ORIGIN: http://localhost:3000
-      RAILS_ENV: production
-      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
-      DATABASE_USERNAME: ${POSTGRES_USER}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
-      DATABASE_NAME: ${POSTGRES_DB}
     volumes:
       - .:/myapp
-    # ports:
-    #   - "3001:3001"
-    expose:
-      - "3001"
     depends_on:
       - db
   nginx:
@@ -39,17 +23,20 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./certs:/etc/nginx/certs
-      - ./certs-data/certbot/www:/var/www/certbot
+      - ./letsencrypt:/etc/letsencrypt:rw
     depends_on:
       - web
+      - certbot
   certbot:
     image: certbot/certbot
+    env_file:
+      - .env
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do \
+      certbot certonly --webroot -w /var/www/certbot --email ${EMAIL} --agree-tos --no-eff-email -d ${HOST} || \
+      certbot renew --webroot -w /var/www/certbot --email ${EMAIL} --agree-tos --no-eff-email -d ${HOST}; \
+      sleep 240h; done'
     volumes:
-      - ./certs:/etc/letsencrypt
-      - ./certs-data/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 240h & wait $${!}; done;'"
+      - ./letsencrypt:/etc/letsencrypt
+      - ./certbot:/var/www/certbot
 volumes:
   postgres_volume:
-  certs:
-  certs-data:
